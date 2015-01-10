@@ -71,6 +71,14 @@ docker build -t transfersh .
 docker run --publish 8080:8080 --rm transfersh --provider local --basedir /tmp/
 ```
 
+## Deploy on OpenShift
+
+To deploy your own instance on openshift, from the CLI (you'll need `rhc` tool version 1.9 or later), run:
+
+```
+rhc create-app mytransfersh https://cartreflect-claytondev.rhcloud.com/reflect?github=smarterclayton/openshift-go-cart PROVIDER=local --from-code https://github.com/popox/transfer.sh
+```
+
 ## Contributions
 
 Contributions are welcome.
