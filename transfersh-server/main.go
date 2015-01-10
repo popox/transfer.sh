@@ -52,6 +52,11 @@ var config struct {
 	VIRUSTOTAL_KEY     string
 	CLAMAV_DAEMON_HOST string "/tmp/clamd.socket"
 	Temp               string
+        Logfile            string
+        Basedir            string
+        Port               string
+        Host               string
+        Provider           string
 }
 
 var storage Storage
@@ -67,7 +72,28 @@ func init() {
 		config.CLAMAV_DAEMON_HOST = os.Getenv("CLAMAV_DAEMON_HOST")
 	}
 
-	config.Temp = os.TempDir()
+        if os.Getenv("OPENSHIFT_GO_LOG_DIR") != "" {
+           config.Logfile = os.Getenv("OPENSHIFT_GO_LOG_DIR")+"/go.log"
+        } else {
+           config.Logfile = ""
+        }
+        if os.Getenv("PORT") != "" {
+           config.Port = os.Getenv("PORT")
+        } else {
+           config.Port = "8080"
+        }
+        config.Host = os.Getenv("HOST")
+        config.Basedir = os.Getenv("OPENSHIFT_DATA_DIR")
+        if os.Getenv("PROVIDER") != "" {
+        	config.Provider = os.Getenv("PROVIDER")
+        } else {
+        	config.Provider = "s3"
+        }
+        if os.Getenv("OPENSHIFT_DATA_DIR") != "" {
+        	config.Temp = os.Getenv("OPENSHIFT_DATA_DIR")+"/tmp"
+        } else {
+        	config.Temp = os.TempDir()
+        }
 }
 
 func main() {
@@ -124,11 +150,12 @@ func main() {
 
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
-	port := flag.String("port", "8080", "port number, default: 8080")
+        host := flag.String("host", config.Host, "host, default: 127.0.0.1")
+	port := flag.String("port", config.Port, "port number, default: 8080")
 	temp := flag.String("temp", config.Temp, "")
-	basedir := flag.String("basedir", "", "")
-	logpath := flag.String("log", "", "")
-	provider := flag.String("provider", "s3", "")
+	basedir := flag.String("basedir", config.Basedir, "")
+	logpath := flag.String("log", config.Logfile, "")
+	provider := flag.String("provider", config.Provider, "")
 
 	flag.Parse()
 
@@ -164,11 +191,11 @@ func main() {
 
 	mime.AddExtensionType(".md", "text/x-markdown")
 
-	log.Printf("Transfer.sh server started. :\nlistening on port: %v\nusing temp folder: %s\nusing storage provider: %s", *port, config.Temp, *provider)
+	log.Printf("Transfer.sh server started. :\nlistening on: %s:%v\nusing temp folder: %s\nusing storage provider: %s", *host, *port, config.Temp, *provider)
 	log.Printf("---------------------------")
 
 	s := &http.Server{
-		Addr:    fmt.Sprintf(":%s", *port),
+		Addr:    fmt.Sprintf("%s:%s", *host, *port),
 		Handler: handlers.PanicHandler(LoveHandler(RedirectHandler(handlers.LogHandler(r, handlers.NewLogOptions(log.Printf, "_default_")))), nil),
 	}
 
