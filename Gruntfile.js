@@ -15,7 +15,7 @@ module.exports = function (grunt) {
     // configurable paths
     var yeomanConfig = {
         app: require('./bower.json').appPath || 'transfersh-web',
-        dist: 'transfersh-server/static/'
+        dist: 'static/'
     };
 
     grunt.initConfig({

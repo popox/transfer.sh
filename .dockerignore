@@ -12,5 +12,5 @@ bower_components
 node_modules
 extras
 build
-transfersh-server/run.sh
+run.sh
 .elasticbeanstalk

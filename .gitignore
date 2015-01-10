@@ -12,5 +12,5 @@ bin/
 bower_components/
 node_modules/
 
-transfersh-server/run.sh
+run.sh
 .elasticbeanstalk/

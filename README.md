@@ -53,7 +53,7 @@ go get github.com/kennygrant/sanitize
 grunt serve
 grunt build
 
-go run transfersh-server/*.go -provider=local --port 8080 --temp=/tmp/ --basedir=/tmp/ 
+go run *.go -provider=local --port 8080 --temp=/tmp/ --basedir=/tmp/ 
 ```
 
 ## Build
@@ -67,7 +67,6 @@ go build -o transfersh-server *.go
 For easy deployment we've enabled Docker deployment.
 
 ```
-cd ./transfer-server/
 docker build -t transfersh .
 docker run --publish 8080:8080 --rm transfersh --provider local --basedir /tmp/
 ```
